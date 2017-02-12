@@ -87,3 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# oda files
+dictionary.txt
+
+#tester
+testbench.py
