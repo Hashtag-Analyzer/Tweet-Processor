@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #Detects the presence of a hashtag for the spark filter
 #@Param tweet object
 #@Return true if there is a hashtag

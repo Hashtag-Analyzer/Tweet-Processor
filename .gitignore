@@ -89,7 +89,7 @@ ENV/
 .ropeproject
 
 # oda files
-dictionary.txt
+Dictionaries
 
 #tester
 testbench.py
