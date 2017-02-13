@@ -8,7 +8,7 @@ import libtp
 #SPARK_PATH = os.environ['SPARK_PATH']
 #logFile = SPARK_PATH + "/logfile.txt"
 sc = SparkContext("local", "processor")
-logData = sc.textFile(logFile).cache()
+#logData = sc.textFile(logFile).cache()
 
 #Define what files we are going to use
 #In the case of this code, we are targetting our tweet directory, and joining the files together
@@ -27,5 +27,5 @@ hashtagMessages = textFile.filter(libtp.hasHashtag)\
 #obscenity = hashtagMessages\
 #            .map
 #Map Reduce to
-hashtagMessages.collect()
+print(hashtagMessages.collect())
 sc.stop()
