@@ -5,8 +5,8 @@ import os
 import libtp
 
 #Do various things for spark
-SPARK_PATH = os.environ['SPARK_PATH']
-logFile = SPARK_PATH + "/logfile.txt"
+#SPARK_PATH = os.environ['SPARK_PATH']
+#logFile = SPARK_PATH + "/logfile.txt"
 sc = SparkContext("local", "processor")
 logData = sc.textFile(logFile).cache()
 
