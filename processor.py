@@ -14,17 +14,18 @@ logData = sc.textFile(logFile).cache()
 #In the case of this code, we are targetting our tweet directory, and joining the files together
 #Then we pass into spark for the map-reduce
 files = "/home/jadixon/Documents/tweets/" + (",/home/jadixon/Documents/tweets/".join(os.listdir("/home/jadixon/Documents/tweets")))
-#textFile = sc.textFile(files)
-textFile = sc.textFile("/home/jadixon/Documents/tweets/example.txt")
+textFile = sc.textFile(files)
+#textFile = sc.textFile("/home/jadixon/Documents/tweets/example.txt")
 
 #Map Reduce to count hashtags
-hashtagCounts = textFile.filter(libtp.hasHashtag)\
+hashtagMessages = textFile.filter(libtp.hasHashtag)\
                 .flatMap(libtp.parseHashtags)\
                 .map( lambda word: (word[0], [ word[1] ]) )\
-                .reduceByKey(lambda a, b: a+b)
+                .reduceByKey(lambda a, b: a+b)\
+                .cache()
 
-#passOne = sc.sequenceFile(hashtagCounts.collect())
-#Print our data
-print(hashtagCounts.collect())
-
+#obscenity = hashtagMessages\
+#            .map
+#Map Reduce to
+hashtagMessages.collect()
 sc.stop()
