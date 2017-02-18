@@ -22,15 +22,17 @@ sc = SparkContext(conf=sconf)
 #files = "/home/jadixon/Documents/tweets/" + (",/home/jadixon/Documents/tweets/".join(os.listdir("/home/jadixon/Documents/tweets")))
 #textFile = sc.textFile(files)
 
-#textFile = sc.textFile("/home/jadixon/Documents/Senior-Design/tweets/example.txt")
+textFile = sc.textFile("/home/jadixon/Documents/Senior-Design/tweets/example.txt")
 
 #Map Reduce to count hashtags
-#hashtagMessages = textFile.filter(libtp.hasHashtag)\
-#                .flatMap(libtp.parseHashtags)\
-#                .map( lambda word: (word[0], [ word[1] ] ) )\
-#                .reduceByKey(lambda a, b: a+b)
+hashtagMessages = textFile.filter(libtp.hasHashtag)\
+                .flatMap(libtp.parseHashtags)\
+                .map( lambda word: (word[0], [ word[1] ] ) )\
+                .reduceByKey(lambda a, b: a+b)
+                #.map( lambda word: (word[0], [ word[1] ] ) )\
 
 
-test = sc.parallelize([('hello', [45,67]),('balls', [56,78])]).map(lambda x: (x[0], )).saveAsSequenceFile('/home/jadixon/Documents/Senior-Design/seq')
-print(sc.sequenceFile('/home/jadixon/Documents/Senior-Design/seq').collect())
+test = sc.parallelize(hashtagMessages.collect()).map(lambda x: (x[0], x[1]))
+test.saveAsTextFile('/home/jadixon/Documents/Senior-Design/seq')
+print(sc.textFile('/home/jadixon/Documents/Senior-Design/seq').collect())
 sc.stop()
