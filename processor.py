@@ -4,7 +4,9 @@ from pyspark import SparkContext
 from pyspark import SparkConf
 import os
 import libtp
-#import ora
+import sys
+sys.path.insert(0, './PyORT')
+import ort
 
 #Do various things for spark
 SPARK_PATH = os.environ['SPARK_PATH']
@@ -29,6 +31,6 @@ sc = SparkContext(conf=sconf)
 #                .reduceByKey(lambda a, b: a+b)
 
 
-#test = sc.parallelize([('hello', [45,67]),('balls', [56,78])]).map(lambda x: (x[0], )).saveAsSequenceFile('/home/jadixon/Documents/Senior-Design/seq')
+test = sc.parallelize([('hello', [45,67]),('balls', [56,78])]).map(lambda x: (x[0], )).saveAsSequenceFile('/home/jadixon/Documents/Senior-Design/seq')
 print(sc.sequenceFile('/home/jadixon/Documents/Senior-Design/seq').collect())
 sc.stop()
