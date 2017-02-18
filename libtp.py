@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import sys
+sys.path.insert(0, './PyORT')
+import ort
+from bidict import bidict
 
 #Detects the presence of a hashtag for the spark filter
 #@Param tweet object
@@ -19,4 +23,18 @@ def parseHashtags(tweet):
     beg = tweet.find('"message"') + 10
     end = tweet.find('"timestamp"') - 1
     message = tweet[beg:end]
-    return list(map(lambda hashtag: (hashtag, message), hashtags))
+    beg = tweet.find('"full_name"') + 13
+    end = tweet.find('"possibly_sensitive"') - 2
+    location = tweet[beg:end].split(',')
+    if len(location[1].strip()) == 2:
+        location = states.inv[location[1].strip()] + '(' + location[1].strip() + ')'
+    else:
+        location = states[location[0]] + '(' + location[0] + ')'
+    return list(map(lambda hashtag: ((hashtag, location), message), hashtags))
+
+
+
+
+#Load the states into a bidirectional dictionary for ease of access and data formatting
+states = ort.loadDictionary('/home/jadixon/Documents/Senior-Design/Tweet-Processor/states.txt')
+states = bidict(states)
