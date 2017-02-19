@@ -13,25 +13,39 @@ sconf = SparkConf().set("spark.executor.memory", "7g").setAppName("processor").s
 sc = SparkContext(conf=sconf)
 #logData = sc.textFile(logFile).cache()
 
+def println(item):
+    print(item)
+    print('\n')
+
 #Define what files we are going to use
 #In the case of this code, we are targetting our tweet directory, and joining the files together
 #Then we pass into spark for the map-reduce
 
-#files = "/home/jadixon/Documents/tweets/" + (",/home/jadixon/Documents/tweets/".join(os.listdir("/home/jadixon/Documents/tweets")))
-#textFile = sc.textFile(files)
+files = "/home/jadixon/Documents/Senior-Design/tweets/" + (",/home/jadixon/Documents/Senior-Design/tweets/".join(os.listdir("/home/jadixon/Documents/Senior-Design/tweets")))
+textFile = sc.textFile('/home/jadixon/Documents/Senior-Design/tweets/file456.txt')
 
-textFile = sc.textFile("/home/jadixon/Documents/Senior-Design/tweets/example.txt")
+#textFile = sc.textFile("/home/jadixon/Documents/Senior-Design/tweets/example.txt")
+print ('Removing old sequence files...')
+shutil.rmtree('/home/jadixon/Documents/Senior-Design/seq')
+shutil.rmtree('/home/jadixon/Documents/Senior-Design/obscLoc')
 
 #Map Reduce to count hashtags
 hashtagMessages = textFile.filter(libtp.hasHashtag)\
                 .flatMap(libtp.parseHashtags)\
-                .map( lambda word: (word[0], [ libtp.ort.rankText(word[1]) ]) )\
-                .reduceByKey(lambda a, b: a+b)
-                #.map( lambda word: (word[0], [ word[1] ] ) )\
+                .map( lambda x: (x[0], str(libtp.ort.rankText(x[1], False)) + ',' ) )\
+                .reduceByKey(lambda a, b: a+b)\
+                .saveAsSequenceFile('/home/jadixon/Documents/Senior-Design/seq')
 
-#print hashtagMessages.collect()
-shutil.rmtree('/home/jadixon/Documents/Senior-Design/seq')
-test = sc.parallelize(hashtagMessages.collect()).map(lambda x: (x[0], x[1]))
-test.saveAsTextFile('/home/jadixon/Documents/Senior-Design/seq')
-#print(sc.textFile('/home/jadixon/Documents/Senior-Design/seq').collect())
+analysisByLocations = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/seq')\
+                .flatMap(libtp.unrollList)\
+                .map(lambda x: (x[0], str(((sum(x[1])/len(x[1]), len(x[1])), (sum(x[2])/len(x[2]) if x[2] else 0.0, len(x[2])) ))))\
+                .reduceByKey(libtp.combineStrAvg)\
+                .saveAsSequenceFile('/home/jadixon/Documents/Senior-Design/obscLoc')
+
+analysisAsAWhole = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/obscLoc')\
+                .flatMap(libtp.unrollAvg)\
+                .map(libtp.revertAvg)\
+                .reduceByKey(libtp.combineStrAvg)
+
+print analysisAsAWhole.count()
 sc.stop()
