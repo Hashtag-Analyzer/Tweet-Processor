@@ -3,8 +3,11 @@
 from pyspark import SparkContext
 from pyspark import SparkConf
 import os
+import sys
 import libtp
 import shutil
+sys.path.insert(0, './Tweet-Sentiment')
+import sentiment
 
 #Do various things for spark
 SPARK_PATH = os.environ['SPARK_PATH']
@@ -20,18 +23,19 @@ sc = SparkContext(conf=sconf)
 #textFile = sc.textFile(files)
 
 print ('Removing old sequence files...')
-#shutil.rmtree('/home/jadixon/Documents/Senior-Design/seq')
+shutil.rmtree('/home/jadixon/Documents/Senior-Design/seq')
 
-#relevants = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/Archive/relevantHashtags').collect()
-#contents = dict([ tuple(x) for x in relevants ])
+relevants = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/Archive/relevantHashtags').collect()
+contents = dict([ tuple(x) for x in relevants ])
 
-#locationWithHashTags = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/relevantTweets')\
-#                        .flatMap(lambda x: libtp.parseHashtags(x[0]))\
-#                        .filter( lambda x: contents.has_key(x[0].split(',')[0]) )\
-#                        .map( lambda x: (x[0], x[1] + '\n') )\
-#                        .reduceByKey(lambda a, b: a+b)\
-#                        .saveAsSequenceFile('/home/jadixon/Documents/Senior-Design/seq')
 
-print sc.sequenceFile('/home/jadixon/Documents/Senior-Design/seq').collect()[0]
-#print sc.sequenceFile('/home/jadixon/Documents/Senior-Design/Archive/relevantHashtags').collect()
+locationWithHashTags = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/relevantTweets')\
+                        .flatMap(lambda x: libtp.parseHashtags(x[0]))\
+                        .filter( lambda x: contents.has_key(x[0].split(',')[0]) )\
+                        .map( lambda x: (x[0], x[1] + '\n') )\
+                        .reduceByKey(lambda a, b: a+b)\
+                        .saveAsSequenceFile('/home/jadixon/Documents/Senior-Design/seq')
+
+print len(sc.sequenceFile('/home/jadixon/Documents/Senior-Design/seq').collect())
+
 sc.stop()

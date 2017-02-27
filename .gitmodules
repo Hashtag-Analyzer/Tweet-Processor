@@ -1,3 +1,6 @@
 [submodule "PyORT"]
 	path = PyORT
 	url = https://github.com/ColdNightHour/PyORT.git
+[submodule "Tweet-Sentiment"]
+	path = Tweet-Sentiment
+	url = https://github.com/Hashtag-Analyzer/Tweet-Sentiment.git
