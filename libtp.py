@@ -4,6 +4,36 @@ sys.path.insert(0, './PyORT')
 import ort
 from bidict import bidict
 from ast import literal_eval as make_tuple
+
+
+
+with open('/home/jadixon/Documents/Senior-Design/Tweet-Processor/filteredTweets.txt') as d:
+    contents = d.readlines()
+contents = dict([ tuple(x.strip().split(',')) for x in contents ])
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Poor mans map reduce stuff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def removeTargets(target):
+    isolatedHashtags = parseHashtagsOnly(target)
+    for hashtag in isolatedHashtags:
+        if contents.has_key(hashtag):
+            return False
+    return True
+
+
+def removeAgain(tweet, relevants):
+    isolatedHashtags = parseHashtagsOnly(tweet)
+    for hashtag in isolatedHashtags:
+        if relevants.has_key(hashtag):
+            return True
+    return False
+
+def parseHashtagsOnly(tweet):
+    beg = tweet.find('"hashTags"') + 13
+    end = tweet.find('"full_name"') - 3
+    hashtags = tweet[beg:end].replace('"', '').split(',')
+    return [hashtag.lower() for hashtag in hashtags]
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~USED IN FIRST PASS MAP REDUCE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #Detects the presence of a hashtag for the spark filter
 #@Param tweet object
@@ -24,6 +54,7 @@ def parseHashtags(tweet):
     beg = tweet.find('"message"') + 10
     end = tweet.find('"timestamp"') - 1
     message = tweet[beg:end]
+    message = message.replace('\n', ' ')
     beg = tweet.find('"full_name"') + 13
     end = tweet.find('"possibly_sensitive"') - 2
     location = tweet[beg:end].split(',')
