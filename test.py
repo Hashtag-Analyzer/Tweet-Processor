@@ -18,7 +18,6 @@ def parseHashtags(tweet):
         else:
             location = 'Non-USA'
     else:
-        print states[0]
         if location[0].strip() in states[0]:
             location = location[0] + ' (' + states[0][location[0].strip()] + ')'
         else:

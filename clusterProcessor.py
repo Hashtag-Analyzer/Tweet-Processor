@@ -97,7 +97,7 @@ def parseHashtags(tweet):
             location = 'Non-USA'
     else:
         if location[0].strip() in states[0]:
-            location = location[0] + ' (' + states[location[0]] + ')'
+            location = location[0] + ' (' + states[0][location[0].strip()] + ')'
         else:
             location = 'Non-USA'
     return list(map(lambda hashtag: (hashtag.lower() + ',' + location, message), hashtags))
