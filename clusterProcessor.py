@@ -42,7 +42,7 @@ if __name__ == "__main__":
 	#shutil.rmtree('~/relevantHashtags')
 	#shutil.rmtree('~/relevantTweets')
 
-	files = "./tweets/" + ("./tweets/".join(os.listdir("./tweets")))
+	files = "/home/cs179g/tweets/" + (",/home/cs179g/tweets/".join(os.listdir("/home/cs179g/tweets")))
 	textFile = sc.textFile(files)
 
 	orderedTweets = textFile.filter(libtp.hasHashtag)\

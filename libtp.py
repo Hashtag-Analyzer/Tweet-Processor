@@ -2,12 +2,12 @@
 import sys
 sys.path.insert(0, './PyORT')
 #import ort
-from bidict import bidict
+#from bidict import bidict
 from ast import literal_eval as make_tuple
 
 
 
-with open('/home/jadixon/Documents/Senior-Design/Tweet-Processor/filteredTweets.txt') as d:
+with open('/home/cs179g/Tweet-Processor/filteredTweets.txt') as d:
     contents = d.readlines()
 contents = dict([ tuple(x.strip().split(',')) for x in contents ])
 
@@ -61,12 +61,12 @@ def parseHashtags(tweet):
     if len(location) == 1 or len(location) == 0:
         location = 'Not enough information'
     elif len(location[1].strip()) == 2:
-        if location[1].strip() in states.inv:
-            location = states.inv[location[1].strip()] + ' (' + location[1].strip() + ')'
+        if location[1].strip() in states[1]:
+            location = states[1][location[1].strip()] + ' (' + location[1].strip() + ')'
         else:
             location = 'Non-USA'
     else:
-        if location[0].strip() in states:
+        if location[0].strip() in states[0]:
             location = location[0] + ' (' + states[location[0]] + ')'
         else:
             location = 'Non-USA'
@@ -75,10 +75,15 @@ def parseHashtags(tweet):
 
 
 def loadDictionary(path):
-    content = ''
+    contents = ''
     with open(path) as d:
-        content = d.readlines()
-    return dict([ tuple(x.strip().split(',')) for x in content ])
+        contents = d.readlines()
+    invcontent = [tuple((content.split(',')[1].strip(), content.split(',')[0].strip())) for content in contents]
+    states = dict([ tuple(x.strip().split(',')) for x in contents ])
+    statesinv = dict(invcontent)
+    return (states, statesinv)
+
+
+states = loadDictionary('/home/cs179g/Tweet-Processor/states.txt')
 #Load the states into a bidirectional dictionary for ease of access and data formatting
-states = loadDictionary('/states.txt')
-states = bidict(states)
+#states = loadDictionary('/home/cs179g/Tweet-Processor/states.txt')
