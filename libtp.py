@@ -103,6 +103,14 @@ def combineStrAvg(a, b):
     rTup = (aTup[1][0] + bTup[1][0], aTup[1][1] + bTup[1][1])
     return str((lTup,rTup))
 
+
+
+
+def loadDictionary(path):
+    content = ''
+    with open(path) as d:
+        content = d.readlines()
+    return dict([ tuple(x.strip().split(',')) for x in content ])
 #Load the states into a bidirectional dictionary for ease of access and data formatting
-states = ort.loadDictionary('/home/jadixon/Documents/Senior-Design/Tweet-Processor/states.txt')
+states = loadDictionary('/states.txt')
 states = bidict(states)

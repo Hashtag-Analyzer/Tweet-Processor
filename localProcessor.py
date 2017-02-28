@@ -12,7 +12,7 @@ import re
 
 #Do various things for spark
 SPARK_PATH = os.environ['SPARK_PATH']
-logFile = SPARK_PATH + "/logfile.txt"
+logFile = "./logfile.txt"
 sconf = SparkConf().set("spark.executor.memory", "7g").setAppName("processor").setMaster("local")
 sc = SparkContext(conf=sconf)
 
@@ -26,9 +26,16 @@ sc = SparkContext(conf=sconf)
 #print ('Removing old sequence files...')
 #shutil.rmtree('/home/jadixon/Documents/Senior-Design/seq')
 
+
+
 relevants = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/Archive/relevantHashtags').collect()
 contents = dict([ tuple(x) for x in relevants ])
 
+#relevantTweets = textFile.filter(libtp.hasHashtag)\
+#               .filter(libtp.removeTargets)\
+#               .filter(lambda x: libtp.removeAgain(x, contents))\
+#               .map(lambda x: (x, 0))\
+#               .saveAsSequenceFile('/home/jadixon/Documents/Senior-Design/relevantTweets')
 
 locationWithHashTags = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/relevantTweets')\
                         .flatMap(lambda x: libtp.parseHashtags(x[0]))\
