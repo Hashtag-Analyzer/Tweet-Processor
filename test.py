@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def parseHashtags(tweet):
     beg = tweet.find('"hashTags"') + 13
     end = tweet.find('"full_name"') - 3
@@ -17,8 +18,9 @@ def parseHashtags(tweet):
         else:
             location = 'Non-USA'
     else:
+        print states[0]
         if location[0].strip() in states[0]:
-            location = location[0] + ' (' + states[location[0]] + ')'
+            location = location[0] + ' (' + states[0][location[0].strip()] + ')'
         else:
             location = 'Non-USA'
     return list(map(lambda hashtag: (hashtag.lower() + ',' + location, message), hashtags))
