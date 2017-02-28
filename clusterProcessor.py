@@ -146,24 +146,24 @@ if __name__ == "__main__":
 	                .map( lambda x: (x[0].split(',')[0], 1))\
 	                .reduceByKey(lambda a, b: a+b)\
 	                .sortBy(lambda x: x[1], ascending=False)\
-	                .saveAsSequenceFile('orderedTweets')
+	                .saveAsSequenceFile('/home/cs179g/orderedTweets')
 
-	smallest = sc.sequenceFile('orderedTweets').takeOrdered(40, key = lambda x: -x[1])[39][1]
+	smallest = sc.sequenceFile('home/cs179g/orderedTweets').takeOrdered(40, key = lambda x: -x[1])[39][1]
 
-	relevantHashtags = sc.sequenceFile('orderedTweets')\
+	relevantHashtags = sc.sequenceFile('home/cs179g/orderedTweets')\
 	                .filter(lambda x: x[1] >= smallest)\
 	                .map(lambda x: (x[0], x[1]))\
 	                .sortBy(lambda x: x[1], ascending=False)\
 	                .saveAsSequenceFile('relevantHashtags')
 
-	relevants = sc.sequenceFile('relevantHashtags').collect()
+	relevants = sc.sequenceFile('home/cs179g/relevantHashtags').collect()
 	contents = dict([ tuple(x) for x in relevants ])
 
 	relevantTweets = textFile.filter(hasHashtag)\
 	               .filter(removeTargets)\
 	               .filter(lambda x: removeAgain(x, contents))\
 	               .map(lambda x: (x, 0))\
-	               .saveAsSequenceFile('relevantTweets')
+	               .saveAsSequenceFile('home/cs179g/relevantTweets')
 
 	hashtagData = sc.textFile(sys.argv[1])\
 		.flatMap(ParseData)\
@@ -174,4 +174,4 @@ if __name__ == "__main__":
 				'emotion': row[4],
 				'sentiment': row[5]}).collect()
 
-	sc.parallelize(hashtagData).saveToCassandra(keyspace='database_t', table='test')
+	#sc.parallelize(hashtagData).saveToCassandra(keyspace='database_t', table='test')
