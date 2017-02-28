@@ -72,38 +72,6 @@ def parseHashtags(tweet):
             location = 'Non-USA'
     return list(map(lambda hashtag: (hashtag.lower() + ',' + location, message), hashtags))
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~USED IN SECOND PASS MAP REDUCE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#Unrolls a hashtags str list of values into a real list so the parsing can be done easier
-#@Param: a piece of data, containing a hashtag and a str of values formatted as a list
-#@Return: list -> [(hashtagname, obscenity values with 0, obscenity values without 0)]
-def unrollList(data):
-    globalObscenity = [float(value) for value in data[1].split(',')[:-1]]
-    pureObscenity = [float(value) for value in data[1].split(',')[:-1] if value != '0.0']
-    return [(data[0] + ',collective', globalObscenity, pureObscenity)]
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~USED IN THIRD PASS MAP REDUCE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def unrollAvg(data):
-    dTup = make_tuple(data[1])
-    hashtag = data[0].split(',')[0]
-    return [(hashtag, dTup)]
-
-def revertAvg(data):
-    x = data[1]
-    lTup = (x[0][0] * x[0][1], x[0][1])
-    rTup = (x[1][0] * x[1][1], x[1][1])
-    return (data[0], str((lTup, rTup)))
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~USED COLLECTIVELY~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#Takes in tuples formatted as a string and adds the respective elements together
-def combineStrAvg(a, b):
-    aTup = make_tuple(a)
-    bTup = make_tuple(b)
-    lTup = (aTup[0][0] + bTup[0][0] , aTup[0][1] + bTup[0][1])
-    rTup = (aTup[1][0] + bTup[1][0], aTup[1][1] + bTup[1][1])
-    return str((lTup,rTup))
-
-
 
 
 def loadDictionary(path):

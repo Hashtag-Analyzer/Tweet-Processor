@@ -3,6 +3,8 @@ from __future__ import print_function
 import sys
 import json
 import re
+import shutil
+import os
 
 from pyspark.sql import SQLContext
 from pyspark import SparkConf
@@ -35,9 +37,13 @@ if __name__ == "__main__":
 	sc = CassandraSparkContext(conf=conf)
 	sqlContext = SQLContext(sc)
 
-	files = "/tweets/" + (",/home/jadixon/Documents/Senior-Design/tweets/".join(os.listdir("/home/jadixon/Documents/Senior-Design/tweets")))
+	#shutil.rmtree('~/orderedTweets')
+	#shutil.rmtree('~/relevantHashtags')
+	#shutil.rmtree('~/relevantTweets')
+
+	files = "./tweets/" + ("./tweets/".join(os.listdir("./tweets")))
 	textFile = sc.textFile(files)
-	
+
 	orderedTweets = textFile.filter(libtp.hasHashtag)\
 	                .filter(libtp.removeTargets)\
 	                .flatMap(libtp.parseHashtags)\
