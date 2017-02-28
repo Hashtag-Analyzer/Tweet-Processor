@@ -148,22 +148,22 @@ if __name__ == "__main__":
 	                .sortBy(lambda x: x[1], ascending=False)\
 	                .saveAsSequenceFile('/home/cs179g/orderedTweets')
 
-	smallest = sc.sequenceFile('home/cs179g/orderedTweets').takeOrdered(40, key = lambda x: -x[1])[39][1]
+	smallest = sc.sequenceFile('/home/cs179g/orderedTweets').takeOrdered(40, key = lambda x: -x[1])[39][1]
 
-	relevantHashtags = sc.sequenceFile('home/cs179g/orderedTweets')\
+	relevantHashtags = sc.sequenceFile('/home/cs179g/orderedTweets')\
 	                .filter(lambda x: x[1] >= smallest)\
 	                .map(lambda x: (x[0], x[1]))\
 	                .sortBy(lambda x: x[1], ascending=False)\
-	                .saveAsSequenceFile('relevantHashtags')
+	                .saveAsSequenceFile('/home/cs179g/relevantHashtags')
 
-	relevants = sc.sequenceFile('home/cs179g/relevantHashtags').collect()
+	relevants = sc.sequenceFile('/home/cs179g/relevantHashtags').collect()
 	contents = dict([ tuple(x) for x in relevants ])
 
 	relevantTweets = textFile.filter(hasHashtag)\
 	               .filter(removeTargets)\
 	               .filter(lambda x: removeAgain(x, contents))\
 	               .map(lambda x: (x, 0))\
-	               .saveAsSequenceFile('home/cs179g/relevantTweets')
+	               .saveAsSequenceFile('/home/cs179g/relevantTweets')
 
 	hashtagData = sc.textFile(sys.argv[1])\
 		.flatMap(ParseData)\
