@@ -93,3 +93,7 @@ Dictionaries
 
 #tester
 SelectiveAspects.txt
+states.txt
+sentimentEmotion.txt
+sentimentEmotion2.txt
+filteredTweets.txt

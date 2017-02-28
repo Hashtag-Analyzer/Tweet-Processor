@@ -8,6 +8,7 @@ import libtp
 import shutil
 sys.path.insert(0, './Tweet-Sentiment')
 import sentiment
+import re
 
 #Do various things for spark
 SPARK_PATH = os.environ['SPARK_PATH']
@@ -22,31 +23,31 @@ sc = SparkContext(conf=sconf)
 #files = "/home/jadixon/Documents/Senior-Design/tweets/" + (",/home/jadixon/Documents/Senior-Design/tweets/".join(os.listdir("/home/jadixon/Documents/Senior-Design/tweets")))
 #textFile = sc.textFile(files)
 
-print ('Removing old sequence files...')
+#print ('Removing old sequence files...')
 #shutil.rmtree('/home/jadixon/Documents/Senior-Design/seq')
 
-#relevants = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/Archive/relevantHashtags').collect()
-#contents = dict([ tuple(x) for x in relevants ])
+relevants = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/Archive/relevantHashtags').collect()
+contents = dict([ tuple(x) for x in relevants ])
 
 
-#locationWithHashTags = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/relevantTweets')\
-#                        .flatMap(lambda x: libtp.parseHashtags(x[0]))\
-#                        .filter( lambda x: contents.has_key(x[0].split(',')[0]) )\
-#                        .map( lambda x: (x[0], x[1] + '\n') )\
-#                        .reduceByKey(lambda a, b: a+b)\
-#                        .saveAsSequenceFile('/home/jadixon/Documents/Senior-Design/seq')
+locationWithHashTags = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/relevantTweets')\
+                        .flatMap(lambda x: libtp.parseHashtags(x[0]))\
+                        .filter( lambda x: contents.has_key(x[0].split(',')[0]) )\
+                        .map( lambda x: (x[0], x[1] + '\n') )\
+                        .reduceByKey(lambda a, b: a+b)\
+                        .saveAsSequenceFile('/home/jadixon/Documents/Senior-Design/seq')
 
+#relevantHashtags --> hashtags
+#relevantTweets --> tweets
+#seq --> tweetsSubset
 
-documents = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/seq').collect() #1968 location_hashtags
+#Used without spark
+#documents = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/seq').collect() #1968 location_hashtags
 #i = 0
-
-print sentiment.getSentiment(documents[0][1])
-print sentiment.getEmotion(documents[0][1])
-#with open("sentimentEmotion.txt", "w") as myfile:
-#    myfile.write('')
-#while i < 990:
-#    test = (documents[i][0], libtp.ort.rankDocument(documents[i][1]), 2, 3, 34)
-#    with open("sentimentEmotion.txt", "a") as myfile:
+#print documents[1508][0]
+#while i < 1968:
+#    test = (documents[i][0],  sentiment.getSentiment(documents[i][1]), libtp.ort.rankDocument(documents[i][1]), sentiment.getEmotion(documents[i][1]))
+#    with open("sentimentEmotion2.txt", "a") as myfile:
 #        myfile.write(str(test) + '\n')
 #    i = i + 1
 
