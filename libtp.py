@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 sys.path.insert(0, './PyORT')
-import ort
+#import ort
 from bidict import bidict
 from ast import literal_eval as make_tuple
 

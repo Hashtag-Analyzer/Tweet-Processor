@@ -3,6 +3,7 @@ from __future__ import print_function
 import sys
 import json
 import re
+import libtp
 import shutil
 import os
 
@@ -69,13 +70,13 @@ if __name__ == "__main__":
 	               .map(lambda x: (x, 0))\
 	               .saveAsSequenceFile('relevantTweets')
 
-    hashtagData = sc.textFile(sys.argv[1])\
+	hashtagData = sc.textFile(sys.argv[1])\
 		.flatMap(ParseData)\
 		.map(lambda row: {'hashtag': row[0],
-				  'location': row[1],
-				  'obscenityoverall': row[2],
-				  'obscenitypure': row[3],
-				  'emotion': row[4],
-				  'sentiment': row[5]}).collect()
+				'location': row[1],
+				'obscenityoverall': row[2],
+				'obscenitypure': row[3],
+				'emotion': row[4],
+				'sentiment': row[5]}).collect()
 
 #	sc.parallelize(hashtagData).saveToCassandra(keyspace='database_t', table='test')
