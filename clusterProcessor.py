@@ -3,9 +3,13 @@ from __future__ import print_function
 import sys
 import json
 import re
-import libtp
 import shutil
 import os
+
+
+sys.path.insert(0, '/home/cs179g/Tweet-Processor')
+import libtp
+
 
 from pyspark.sql import SQLContext
 from pyspark import SparkConf
@@ -79,4 +83,4 @@ if __name__ == "__main__":
 				'emotion': row[4],
 				'sentiment': row[5]}).collect()
 
-#	sc.parallelize(hashtagData).saveToCassandra(keyspace='database_t', table='test')
+	sc.parallelize(hashtagData).saveToCassandra(keyspace='database_t', table='test')
