@@ -41,6 +41,16 @@ locationWithHashTags = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/re
 #relevantTweets --> tweets
 #seq --> tweetsSubset
 
+
+#414
+#821
+#928
+#1276
+#1303
+#1507
+
+
+
 #Used without spark
 #documents = sc.sequenceFile('/home/jadixon/Documents/Senior-Design/seq').collect() #1968 location_hashtags
 #i = 0
