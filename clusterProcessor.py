@@ -135,7 +135,7 @@ if __name__ == "__main__":
 	print('Removing old sequence files...')
 	#shutil.rmtree('/home/cs179g/orderedTweets')
 	#shutil.rmtree('~/relevantHashtags')
-	#shutil.rmtree('~/relevantTweets')
+	shutil.rmtree('/home/cs179g/relevantTweets')
 	
 	files = "/home/cs179g/tweets7g/" + (",/home/cs179g/tweets7g/".join(os.listdir("/home/cs179g/tweets7g")))
 	textFile = sc.textFile(files)
