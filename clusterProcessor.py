@@ -105,11 +105,11 @@ def parseHashtags(tweet):
 
 
 def loadDictionary(path):
-    contents = ''
+    a = ''
     with open(path) as d:
-        contents = d.readlines()
-    invcontent = [tuple((content.split(',')[1].strip(), content.split(',')[0].strip())) for content in contents]
-    states = dict([ tuple(x.strip().split(',')) for x in contents ])
+        a = d.readlines()
+    invcontent = [tuple((content.split(',')[1].strip(), content.split(',')[0].strip())) for content in a]
+    states = dict([ tuple(x.strip().split(',')) for x in a ])
     statesinv = dict(invcontent)
     return (states, statesinv)
 
@@ -132,12 +132,12 @@ if __name__ == "__main__":
 	conf = SparkConf().setAppName("Processor")
 	sc = CassandraSparkContext(conf=conf)
 	sqlContext = SQLContext(sc)
-
-	#shutil.rmtree('~/orderedTweets')
+	print('Removing old sequence files...')
+	#shutil.rmtree('/home/cs179g/orderedTweets')
 	#shutil.rmtree('~/relevantHashtags')
 	#shutil.rmtree('~/relevantTweets')
-
-	files = "/home/cs179g/tweets/" + (",/home/cs179g/tweets/".join(os.listdir("/home/cs179g/tweets")))
+	
+	files = "/home/cs179g/tweets7g/" + (",/home/cs179g/tweets7g/".join(os.listdir("/home/cs179g/tweets7g")))
 	textFile = sc.textFile(files)
 
 	orderedTweets = textFile.filter(hasHashtag)\
@@ -146,22 +146,24 @@ if __name__ == "__main__":
 	                .map( lambda x: (x[0].split(',')[0], 1))\
 	                .reduceByKey(lambda a, b: a+b)\
 	                .sortBy(lambda x: x[1], ascending=False)\
-	                .saveAsSequenceFile('/home/cs179g/orderedTweets')
+	#                .saveAsSequenceFile('/home/cs179g/orderedTweets')
 
-	smallest = sc.sequenceFile('/home/cs179g/orderedTweets').takeOrdered(40, key = lambda x: -x[1])[39][1]
-
-	relevantHashtags = sc.sequenceFile('/home/cs179g/orderedTweets')\
+#	smallest = sc.sequenceFile('/home/cs179g/orderedTweets').takeOrdered(40, key = lambda x: -x[1])[39][1]
+	
+	smallest = orderedTweets.takeOrdered(40, key = lambda x: -x[1])[39][1]
+	relevantHashtags = orderedTweets\
 	                .filter(lambda x: x[1] >= smallest)\
 	                .map(lambda x: (x[0], x[1]))\
 	                .sortBy(lambda x: x[1], ascending=False)\
-	                .saveAsSequenceFile('/home/cs179g/relevantHashtags')
+	#                .saveAsSequenceFile('/home/cs179g/relevantHashtags')
 
-	relevants = sc.sequenceFile('/home/cs179g/relevantHashtags').collect()
-	contents = dict([ tuple(x) for x in relevants ])
+#	relevants = sc.sequenceFile('/home/cs179g/relevantHashtags').collect()
+	relevants = relevantHashtags.collect()
+	cont = dict([ tuple(x) for x in relevants ])
 
 	relevantTweets = textFile.filter(hasHashtag)\
 	               .filter(removeTargets)\
-	               .filter(lambda x: removeAgain(x, contents))\
+	               .filter(lambda x: removeAgain(x, cont))\
 	               .map(lambda x: (x, 0))\
 	               .saveAsSequenceFile('/home/cs179g/relevantTweets')
 
